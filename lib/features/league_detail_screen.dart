@@ -4,10 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:suhu_bola/features/schedule_screen.dart';
 import 'package:suhu_bola/features/standings_screen.dart';
+import 'package:suhu_bola/features/top_scorers_screen.dart';
 import 'dart:ui'; // Untuk ImageFilter
 
 // Ini adalah AppBar kustom kita yang terinspirasi dari HTML
-class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget {
+class PremiumLeagueAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final TabController tabController;
 
@@ -25,7 +27,8 @@ class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget
 
     return Container(
       // Padding atas untuk AppBar
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 16, right: 16),
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top, left: 16, right: 16),
       decoration: BoxDecoration(
         // Gradient seperti di .header
         gradient: LinearGradient(
@@ -59,23 +62,26 @@ class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2), // PUTIH transparan
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+                      border: Border.all(
+                          color: Colors.white.withOpacity(0.3), width: 1.5),
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.white), // Ikon putih
+                    child: const Icon(Icons.arrow_back,
+                        color: Colors.white), // Ikon putih
                   ),
                 ),
               ),
             ),
           ),
-          
+
           const Spacer(), // Dorong judul ke bawah
 
           // Judul (seperti .header-title)
           Text(
             title,
-            style: textTheme.titleLarge?.copyWith(fontSize: 28, color: Colors.white), // PASTIKAN WARNA TEKS PUTIH
+            style: textTheme.titleLarge?.copyWith(
+                fontSize: 28, color: Colors.white), // PASTIKAN WARNA TEKS PUTIH
           ),
-          
+
           const SizedBox(height: 16),
 
           // TabBar (seperti .tabs)
@@ -83,7 +89,8 @@ class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget
             height: 44,
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.2), // Latar belakang pil (hitam transparan)
+              color: Colors.black
+                  .withOpacity(0.2), // Latar belakang pil (hitam transparan)
               borderRadius: BorderRadius.circular(30),
             ),
             child: TabBar(
@@ -93,6 +100,7 @@ class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget
               tabs: const [
                 Tab(text: 'KLASEMEN'), // Tab pertama sekarang Klasemen
                 Tab(text: 'JADWAL'),
+                Tab(text: 'TOP SCORE'),
               ],
             ),
           ),
@@ -103,9 +111,9 @@ class PremiumLeagueAppBar extends StatelessWidget implements PreferredSizeWidget
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(200); // Tinggi AppBar kustom kita
+  Size get preferredSize =>
+      const Size.fromHeight(200); // Tinggi AppBar kustom kita
 }
-
 
 // --- Halaman Utama (di-refactor) ---
 class LeagueDetailScreen extends StatefulWidget {
@@ -123,14 +131,13 @@ class LeagueDetailScreen extends StatefulWidget {
 }
 
 class _LeagueDetailScreenState extends State<LeagueDetailScreen>
-    with SingleTickerProviderStateMixin { 
-      
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -147,13 +154,14 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
         title: widget.leagueName,
         tabController: _tabController,
       ),
-      
+
       body: TabBarView(
         controller: _tabController,
         children: [
           // PENTING: Urutan diubah agar KLASEMEN jadi tab pertama
           StandingsScreen(leagueId: widget.leagueId),
           ScheduleScreen(leagueId: widget.leagueId),
+          TopScorersScreen(leagueId: widget.leagueId),
         ],
       ),
     );
