@@ -3,9 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:suhu_bola/features/league_detail_screen.dart';
-// import 'dart:ui'; // <-- DIHAPUS (unused_import)
+import 'dart:ui';
 
-// --- AppBar Kustom (terinspirasi .hybrid-2 .header) ---
+// --- AppBar Kustom Premium dengan Gradient & Visual Effects ---
 class _Hybrid2AppBar extends StatelessWidget implements PreferredSizeWidget {
   const _Hybrid2AppBar();
 
@@ -13,42 +13,118 @@ class _Hybrid2AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final primaryColor = Theme.of(context).colorScheme.primary;
+    final secondaryColor = Theme.of(context).colorScheme.secondary;
 
     return Container(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top +
-            16.0, // Padding untuk status bar
+        top: MediaQuery.of(context).padding.top + 20.0,
         left: 24.0,
         right: 24.0,
-        bottom: 24.0,
+        bottom: 32.0,
       ),
-      // Background AppBar yang sangat gelap
       decoration: BoxDecoration(
-        color: const Color(0xFF0a0e1a), // Warna dari .hybrid-2
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF0a0e1a),
+            const Color(0xFF0f172a).withOpacity(0.8),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         border: Border(
           bottom: BorderSide(
-            color: primaryColor.withOpacity(0.15), // Border aksen
-            width: 1.0,
+            color: primaryColor.withOpacity(0.2),
+            width: 1.5,
           ),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: Text(
-        'SUHU BOLA',
-        style: textTheme.titleLarge?.copyWith(
-          fontSize: 28,
-          shadows: [
-            Shadow(
-              color: primaryColor.withOpacity(0.2),
-              blurRadius: 20,
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Judul utama dengan efek glow
+          Stack(
+            children: [
+              // Efek blur di belakang (glow effect)
+              Text(
+                'SUHU BOLA',
+                style: textTheme.titleLarge?.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: primaryColor.withOpacity(0.3),
+                  shadows: [
+                    Shadow(
+                      color: primaryColor.withOpacity(0.4),
+                      blurRadius: 30,
+                    ),
+                    Shadow(
+                      color: secondaryColor.withOpacity(0.2),
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+              ),
+              // Teks utama di depan
+              Text(
+                'SUHU BOLA',
+                style: textTheme.titleLarge?.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: primaryColor.withOpacity(0.5),
+                      blurRadius: 20,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Subtitle dengan aksen warna
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, secondaryColor],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Liga Sepak Bola Terbaik Dunia',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[400],
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(100.0); // Tinggi AppBar
+  Size get preferredSize => const Size.fromHeight(140.0); // Tinggi AppBar
 }
 // --------------------------------------------------
 
@@ -126,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// --- WIDGET KARTU LIGA (DIPERBARUI UNTUK PRESISI & LOGO) ---
+// --- WIDGET KARTU LIGA PREMIUM ---
 class _LeagueCard extends StatefulWidget {
   final String leagueName;
   final String logoUrl;
@@ -155,33 +231,9 @@ class _LeagueCardState extends State<_LeagueCard> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final primaryColor = Theme.of(context).colorScheme.primary;
+    final secondaryColor = Theme.of(context).colorScheme.secondary;
 
-    final Color cardColor =
-        _isHovered ? const Color(0x0D06b6d4) : const Color(0x08FFFFFF);
-    final Color borderColor =
-        _isHovered ? const Color(0x3306b6d4) : const Color(0x0FFFFFFF);
-
-    // --- PERUBAHAN DI SINI: iconBgColor & iconBorderColor dibuat lebih cerah/kontras ---
-    final Color iconBgColor = _isHovered
-        ? const Color(0x3306b6d4)
-        : const Color(0x3306b6d4); // Sedikit lebih cerah saat tidak hover
-    final Color iconBorderColor = _isHovered
-        ? const Color(0x6606b6d4)
-        : const Color(0x6606b6d4); // Border juga lebih cerah
-    // ----------------------------------------------------------------------------------
-
-    final Color arrowColor =
-        _isHovered ? primaryColor : const Color(0xFF4b5563);
-    final List<BoxShadow> cardShadow = _isHovered
-        ? [
-            BoxShadow(
-                color: const Color(0x1A06b6d4),
-                blurRadius: 24,
-                offset: const Offset(0, 8))
-          ]
-        : [];
-
-    const Duration animDuration = Duration(milliseconds: 300);
+    const Duration animDuration = Duration(milliseconds: 400);
 
     return MouseRegion(
       onEnter: (_) => _onHover(true),
@@ -196,121 +248,264 @@ class _LeagueCardState extends State<_LeagueCard> {
         onTapCancel: () => _onHover(false),
         child: AnimatedContainer(
           duration: animDuration,
-          transform: Matrix4.translationValues(0, _isHovered ? -2 : 0, 0),
-          margin: const EdgeInsets.only(bottom: 12.0),
+          transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
+          margin: const EdgeInsets.symmetric(vertical: 12.0),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Stack(
-              children: [
-                // Card Body
-                AnimatedContainer(
-                  duration: animDuration,
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    border: Border.all(color: borderColor, width: 1),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: cardShadow,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // --- IKON DIPERBARUI (LOGO TIDAK "GEPENG") ---
-                      AnimatedContainer(
-                        duration: animDuration,
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: iconBgColor,
-                          border: Border.all(color: iconBorderColor, width: 1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-
-                        // --- INI PERBAIKANNYA ---
-                        // 'Image.network' dibungkus dengan 'Padding'
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.network(
-                            widget.logoUrl,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.error_outline,
-                                  color: arrowColor, size: 24);
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: primaryColor,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        // ---------------------------------
-                      ),
-                      // ------------------------------------
-
-                      const SizedBox(width: 16),
-
-                      // Info (.league-info)
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.leagueName,
-                              style: textTheme.titleMedium
-                                  ?.copyWith(letterSpacing: -0.2),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              'Lihat Jadwal & Klasemen',
-                              style: textTheme.bodySmall
-                                  ?.copyWith(color: const Color(0xFF6b7280)),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Panah (.arrow)
-                      AnimatedContainer(
-                        duration: animDuration,
-                        transform:
-                            Matrix4.translationValues(_isHovered ? 4 : 0, 0, 0),
-                        child: Icon(Icons.arrow_forward_ios,
-                            color: arrowColor, size: 20),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Garis Vertikal (::before)
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: AnimatedContainer(
-                    duration: animDuration,
-                    width: 3,
-                    height: _isHovered ? 999 : 0,
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Stack(
+                children: [
+                  // Background Card dengan Gradient
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 20.0,
+                    ),
                     decoration: BoxDecoration(
-                      // --- INI PERBAIKAN 'invalid_constant' ---
-                      // 'const' DIHAPUS dari LinearGradient
                       gradient: LinearGradient(
                         colors: [
-                          primaryColor,
-                          Theme.of(context).colorScheme.secondary
+                          _isHovered
+                              ? primaryColor.withOpacity(0.12)
+                              : Colors.white.withOpacity(0.05),
+                          _isHovered
+                              ? secondaryColor.withOpacity(0.08)
+                              : Colors.white.withOpacity(0.02),
                         ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: _isHovered
+                            ? primaryColor.withOpacity(0.4)
+                            : Colors.white.withOpacity(0.1),
+                        width: 1.5,
+                      ),
+                      boxShadow: _isHovered
+                          ? [
+                              BoxShadow(
+                                color: primaryColor.withOpacity(0.25),
+                                blurRadius: 28,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 12),
+                              ),
+                              BoxShadow(
+                                color: secondaryColor.withOpacity(0.1),
+                                blurRadius: 16,
+                                offset: const Offset(0, 6),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // --- LOGO CONTAINER PREMIUM ---
+                        AnimatedContainer(
+                          duration: animDuration,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                primaryColor.withOpacity(0.2),
+                                secondaryColor.withOpacity(0.15),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            border: Border.all(
+                              color: _isHovered
+                                  ? primaryColor.withOpacity(0.5)
+                                  : primaryColor.withOpacity(0.3),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withOpacity(0.2),
+                                blurRadius: _isHovered ? 16 : 8,
+                                spreadRadius: _isHovered ? 2 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Image.network(
+                              widget.logoUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.sports_soccer,
+                                  color: primaryColor,
+                                  size: 40,
+                                );
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      primaryColor,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 24),
+
+                        // --- INFO TEKS PREMIUM ---
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Nama Liga dengan efek glow
+                              Text(
+                                widget.leagueName,
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                  color: Colors.white,
+                                  shadows: _isHovered
+                                      ? [
+                                          Shadow(
+                                            color:
+                                                primaryColor.withOpacity(0.4),
+                                            blurRadius: 8,
+                                          ),
+                                        ]
+                                      : [],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Subtitle dengan aksen warna
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 3,
+                                    height: 14,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [primaryColor, secondaryColor],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Lihat Jadwal, Klasemen & Top Scorer',
+                                      style: textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey[400],
+                                        fontSize: 13,
+                                        letterSpacing: 0.2,
+                                        height: 1.4,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 16),
+
+                        // --- ARROW ICON ANIMATED ---
+                        AnimatedContainer(
+                          duration: animDuration,
+                          transform: Matrix4.translationValues(
+                            _isHovered ? 6 : 0,
+                            0,
+                            0,
+                          ),
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: _isHovered
+                                    ? [primaryColor, secondaryColor]
+                                    : [
+                                        primaryColor.withOpacity(0.2),
+                                        secondaryColor.withOpacity(0.15),
+                                      ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: _isHovered
+                                  ? [
+                                      BoxShadow(
+                                        color: primaryColor.withOpacity(0.4),
+                                        blurRadius: 12,
+                                        spreadRadius: 1,
+                                      ),
+                                    ]
+                                  : [],
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward_rounded,
+                              color: _isHovered
+                                  ? Colors.white
+                                  : primaryColor.withOpacity(0.6),
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Efek Garis Vertikal Animated
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: AnimatedContainer(
+                      duration: animDuration,
+                      width: _isHovered ? 4 : 0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [primaryColor, secondaryColor],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(_isHovered ? 8 : 0),
+                          bottomRight: Radius.circular(_isHovered ? 8 : 0),
+                        ),
+                        boxShadow: _isHovered
+                            ? [
+                                BoxShadow(
+                                  color: primaryColor.withOpacity(0.5),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : [],
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

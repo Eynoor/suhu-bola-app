@@ -57,41 +57,86 @@ class _TopScorersScreenState extends State<TopScorersScreen> {
     });
   }
 
-  // Widget Header Tabel (terinspirasi .table-header)
+  // Widget Header Tabel (Premium Styling)
   Widget _buildHeaderRow(BuildContext context) {
-    final headerStyle = Theme.of(context).textTheme.labelSmall;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+    final headerStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w800,
+          fontSize: 11,
+          letterSpacing: 1.2,
+          color: Theme.of(context).colorScheme.primary,
+        );
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            primaryColor.withOpacity(0.08),
+            primaryColor.withOpacity(0.04),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: primaryColor.withOpacity(0.3),
+            width: 1.5,
+          ),
+        ),
+      ),
       child: Row(
         children: [
           SizedBox(
-              width: 30,
-              child:
-                  Text('#', style: headerStyle, textAlign: TextAlign.center)),
+            width: 30,
+            child: Text(
+              '#',
+              style: headerStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
           const SizedBox(width: 42), // Spasi logo
           Expanded(
             flex: 3,
-            child:
-                Text('Pemain', style: headerStyle, textAlign: TextAlign.left),
+            child: Text(
+              'Pemain',
+              style: headerStyle,
+              textAlign: TextAlign.left,
+            ),
           ),
           SizedBox(
-              width: 30,
-              child:
-                  Text('Gol', style: headerStyle, textAlign: TextAlign.center)),
+            width: 30,
+            child: Text(
+              'Gol',
+              style: headerStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
           SizedBox(
-              width: 30,
-              child:
-                  Text('Ast', style: headerStyle, textAlign: TextAlign.center)),
+            width: 30,
+            child: Text(
+              'Ast',
+              style: headerStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
           SizedBox(
-              width: 35,
-              child:
-                  Text('Pen', style: headerStyle, textAlign: TextAlign.right)),
+            width: 35,
+            child: Text(
+              'Pen',
+              style: headerStyle?.copyWith(
+                color: primaryColor.withOpacity(0.8),
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // Widget Baris Tabel (terinspirasi .table-row)
+  // Widget Baris Tabel (Premium Styling with Glow Effects)
   Widget _buildScorerRow(
       BuildContext context, TopScorerModel scorer, int index) {
     final textTheme = Theme.of(context).textTheme;
@@ -100,106 +145,200 @@ class _TopScorersScreenState extends State<TopScorersScreen> {
 
     // Logika pewarnaan peringkat (seperti .position.gold/green)
     Color rankColor = Colors.grey[400]!;
+    Color rankGlowColor = Colors.grey[400]!;
+
     if (index == 0) {
       rankColor = const Color(0xFFfbbf24); // Emas
+      rankGlowColor = const Color(0xFFfbbf24);
     } else if (index < 3) {
       rankColor = const Color(0xFF4ade80); // Hijau
+      rankGlowColor = const Color(0xFF4ade80);
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[800]!, width: 0.5),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.03),
+            Colors.white.withOpacity(0.01),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-      ),
-      child: Row(
-        children: [
-          // Peringkat
-          SizedBox(
-            width: 30,
-            child: Text(
-              '${index + 1}',
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: rankColor,
-                  shadows: [
-                    BoxShadow(color: rankColor.withOpacity(0.3), blurRadius: 8)
-                  ]),
-            ),
-          ),
-          // Logo Tim
-          SizedBox(
-            width: 42,
-            child: scorer.teamBadgeUrl.isNotEmpty
-                ? Image.network(
-                    scorer.teamBadgeUrl,
-                    width: 24,
-                    height: 24,
-                    errorBuilder: (c, e, s) => const Icon(Icons.shield_outlined,
-                        size: 24, color: Colors.grey),
-                  )
-                : const Icon(Icons.shield_outlined,
-                    size: 24, color: Colors.grey),
-          ),
-          // Nama Pemain dan Tim
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  scorer.playerName,
-                  style: textTheme.bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  scorer.teamName,
-                  style: textTheme.bodySmall?.copyWith(color: Colors.grey[400]),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          // Gol
-          SizedBox(
-              width: 30,
-              child: Text('${scorer.goals}',
-                  style: textTheme.bodySmall, textAlign: TextAlign.center)),
-          // Assist
-          SizedBox(
-              width: 30,
-              child: Text('${scorer.assists}',
-                  style: textTheme.bodySmall, textAlign: TextAlign.center)),
-          // Penalti
-          SizedBox(
-            width: 35,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [primaryColor, secondaryColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(6),
-                boxShadow: [
-                  BoxShadow(
-                      color: primaryColor.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2))
-                ],
-              ),
-              child: Text(
-                '${scorer.penalties}',
-                textAlign: TextAlign.center,
-                style: textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w900, color: Colors.black),
-              ),
-            ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: primaryColor.withOpacity(0.15),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: primaryColor.withOpacity(0.08),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+        child: Row(
+          children: [
+            // Peringkat dengan Glow
+            SizedBox(
+              width: 30,
+              child: Container(
+                alignment: Alignment.center,
+                child: Text(
+                  '${index + 1}',
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: rankColor,
+                    fontSize: 14,
+                    shadows: [
+                      BoxShadow(
+                        color: rankGlowColor.withOpacity(0.4),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                      if (index < 3)
+                        BoxShadow(
+                          color: rankGlowColor.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 4,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Logo Tim dengan Container Gradient
+            SizedBox(
+              width: 42,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  gradient: LinearGradient(
+                    colors: [
+                      primaryColor.withOpacity(0.1),
+                      secondaryColor.withOpacity(0.05),
+                    ],
+                  ),
+                  // border intentionally removed to show clean badge/logo
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: scorer.teamBadgeUrl.isNotEmpty
+                      ? Image.network(
+                          scorer.teamBadgeUrl,
+                          width: 24,
+                          height: 24,
+                          fit: BoxFit.contain,
+                          errorBuilder: (c, e, s) => Icon(
+                            Icons.shield_outlined,
+                            size: 20,
+                            color: primaryColor.withOpacity(0.6),
+                          ),
+                        )
+                      : Icon(
+                          Icons.shield_outlined,
+                          size: 20,
+                          color: primaryColor.withOpacity(0.6),
+                        ),
+                ),
+              ),
+            ),
+            // Nama Pemain dan Tim
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    scorer.playerName,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    scorer.teamName,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[500],
+                      fontSize: 11,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            // Gol - Highlight dengan warna
+            SizedBox(
+              width: 30,
+              child: Text(
+                '${scorer.goals}',
+                style: textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  color: const Color(0xFF4ade80),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // Assist - Highlight dengan warna
+            SizedBox(
+              width: 30,
+              child: Text(
+                '${scorer.assists}',
+                style: textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  color: primaryColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // Penalti Badge (Premium Style dengan Glow)
+            SizedBox(
+              width: 35,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, secondaryColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.2),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Text(
+                  '${scorer.penalties}',
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -7,7 +7,7 @@ import 'package:suhu_bola/features/standings_screen.dart';
 import 'package:suhu_bola/features/top_scorers_screen.dart';
 import 'dart:ui'; // Untuk ImageFilter
 
-// Ini adalah AppBar kustom kita yang terinspirasi dari HTML
+// Premium AppBar untuk League Detail Screen
 class PremiumLeagueAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
@@ -26,93 +26,159 @@ class PremiumLeagueAppBar extends StatelessWidget
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      // Padding atas untuk AppBar
       padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top, left: 16, right: 16),
+        top: MediaQuery.of(context).padding.top,
+        left: 20,
+        right: 20,
+        bottom: 16,
+      ),
       decoration: BoxDecoration(
-        // Gradient seperti di .header
         gradient: LinearGradient(
-          colors: [primaryColor, secondaryColor],
+          colors: [
+            const Color(0xFF0a0e1a),
+            const Color(0xFF0f172a).withOpacity(0.9),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          )
+            color: primaryColor.withOpacity(0.15),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tombol Kembali Kaca (seperti .back-btn)
+          // Back Button - Premium Style
           SafeArea(
-            bottom: false, // Penting agar tidak ada padding berlebih di bawah
+            bottom: false,
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2), // PUTIH transparan
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: Colors.white.withOpacity(0.3), width: 1.5),
-                    ),
-                    child: const Icon(Icons.arrow_back,
-                        color: Colors.white), // Ikon putih
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      primaryColor.withOpacity(0.2),
+                      secondaryColor.withOpacity(0.15),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: primaryColor.withOpacity(0.4),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.15),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  color: primaryColor,
+                  size: 22,
                 ),
               ),
             ),
           ),
 
-          const Spacer(), // Dorong judul ke bawah
+          const SizedBox(height: 16),
 
-          // Judul (seperti .header-title)
+          // Title dengan Glow Effect
           Text(
             title,
             style: textTheme.titleLarge?.copyWith(
-                fontSize: 28, color: Colors.white), // PASTIKAN WARNA TEKS PUTIH
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.3,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: primaryColor.withOpacity(0.4),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
           ),
 
           const SizedBox(height: 16),
 
-          // TabBar (seperti .tabs)
+          // Premium TabBar dengan Glassmorphism
           Container(
-            height: 44,
-            padding: const EdgeInsets.all(4),
+            height: 48,
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: Colors.black
-                  .withOpacity(0.2), // Latar belakang pil (hitam transparan)
-              borderRadius: BorderRadius.circular(30),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.05),
+                  Colors.white.withOpacity(0.02),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: primaryColor.withOpacity(0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.1),
+                  blurRadius: 12,
+                ),
+              ],
             ),
             child: TabBar(
               controller: tabController,
-              // 'indicator' (pil putih) dan 'labelColor' (teks gelap)
-              // sudah diatur di main.dart
+              indicator: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [primaryColor, secondaryColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.grey[400],
+              labelStyle: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                letterSpacing: 0.3,
+              ),
+              unselectedLabelStyle: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
               tabs: const [
-                Tab(text: 'KLASEMEN'), // Tab pertama sekarang Klasemen
+                Tab(text: 'KLASEMEN'),
                 Tab(text: 'JADWAL'),
-                Tab(text: 'TOP SCORE'),
+                Tab(text: 'TOP SCORERS'),
               ],
             ),
           ),
-          const SizedBox(height: 12),
         ],
       ),
     );
   }
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(200); // Tinggi AppBar kustom kita
+  Size get preferredSize => const Size.fromHeight(220);
 }
 
 // --- Halaman Utama (di-refactor) ---
