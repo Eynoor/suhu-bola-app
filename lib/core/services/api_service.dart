@@ -48,7 +48,8 @@ class ApiService {
         return []; // Kembalikan list kosong jika tidak ada data
       }
     } catch (e) {
-      print(e);
+      // Debug: use debugPrint instead of print in production
+      // debugPrint('Error loading schedule: $e');
       throw Exception('Failed to load schedule: $e');
     }
   }
@@ -83,7 +84,8 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      print(e);
+      // Debug: use debugPrint instead of print in production
+      // debugPrint('Error loading standings: $e');
       throw Exception('Failed to load standings: $e');
     }
   }
@@ -112,7 +114,8 @@ class ApiService {
         return []; // Kembalikan list kosong jika tidak ada data
       }
     } catch (e) {
-      print(e);
+      // Debug: use debugPrint instead of print in production
+      // debugPrint('Error loading top scorers: $e');
       throw Exception('Failed to load top scorers: $e');
     }
   }

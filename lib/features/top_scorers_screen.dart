@@ -1,7 +1,9 @@
 import 'dart:ui'; // Untuk ImageFilter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:suhu_bola/core/models/top_scorer_model.dart';
-import 'package:suhu_bola/core/services/api_service.dart';
+import 'package:suhu_bola/core/providers/top_scorers_provider.dart';
+import 'package:suhu_bola/shared/widgets/skeleton_loaders.dart';
 
 class TopScorersScreen extends StatefulWidget {
   final String leagueId;
@@ -16,19 +18,22 @@ class TopScorersScreen extends StatefulWidget {
 }
 
 class _TopScorersScreenState extends State<TopScorersScreen> {
-  late final ApiService _apiService;
-  Future<List<TopScorerModel>>? _topScorersFuture;
-
   List<String> _availableSeasons = [];
   late String _selectedSeason;
 
   @override
   void initState() {
     super.initState();
-    _apiService = ApiService();
     _generateSeasonsList();
     _selectedSeason = _availableSeasons.first;
-    _fetchTopScorers();
+    // Fetch top scorers menggunakan Provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TopScorersProvider>().fetchTopScorers(
+            widget.leagueId,
+            _selectedSeason.substring(
+                0, 4), // Mengubah "2023-2024" menjadi "2023"
+          );
+    });
   }
 
   void _generateSeasonsList() {
@@ -42,18 +47,16 @@ class _TopScorersScreenState extends State<TopScorersScreen> {
     }
   }
 
-  void _fetchTopScorers() {
-    _topScorersFuture = _apiService.getTopScorersByLeague(
-      widget.leagueId,
-      _selectedSeason.substring(0, 4), // Mengubah "2023-2024" menjadi "2023"
-    );
-  }
-
   void _onSeasonChanged(String? newSeason) {
     if (newSeason == null || newSeason == _selectedSeason) return;
     setState(() {
       _selectedSeason = newSeason;
-      _fetchTopScorers();
+      // Fetch top scorers dengan musim baru menggunakan Provider
+      context.read<TopScorersProvider>().fetchTopScorers(
+            widget.leagueId,
+            _selectedSeason.substring(
+                0, 4), // Mengubah "2023-2024" menjadi "2023"
+          );
     });
   }
 
@@ -418,36 +421,42 @@ class _TopScorersScreenState extends State<TopScorersScreen> {
                       border: Border.all(
                           color: Colors.white.withOpacity(0.1), width: 1.5),
                     ),
-                    child: FutureBuilder<List<TopScorerModel>>(
-                      future: _topScorersFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                    child: Consumer<TopScorersProvider>(
+                      builder: (context, topScorersProvider, _) {
+                        final cacheKey =
+                            '${widget.leagueId}-${_selectedSeason.substring(0, 4)}';
+                        final isLoading =
+                            topScorersProvider.isLoading(cacheKey);
+                        final error = topScorersProvider.getError(cacheKey);
+                        final topScorers =
+                            topScorersProvider.getTopScorers(cacheKey);
+
+                        if (isLoading && topScorers.isEmpty) {
+                          return SkeletonLoader(
+                            itemCount: 10,
+                            itemHeight: 70,
+                          );
                         }
-                        if (snapshot.hasError) {
+                        if (error != null) {
                           return Center(
                               child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Text('Error: ${snapshot.error}'),
+                            child: Text('Error: $error'),
                           ));
                         }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        if (topScorers.isEmpty) {
                           return const Center(
                               child: Text('Tidak ada data top scorer.'));
                         }
 
-                        final topScorers = snapshot.data!;
-
                         return Column(
                           children: [
-                            // Header Tabel (di dalam container kaca)
+                            // Header Tabel
                             _buildHeaderRow(context),
-                            // List Data
+                            // List Data (Semua dalam 1 halaman)
                             Expanded(
                               child: ListView.builder(
-                                padding: EdgeInsets.zero, // Hapus padding
+                                padding: EdgeInsets.zero,
                                 itemCount: topScorers.length,
                                 itemBuilder: (context, index) {
                                   return _buildScorerRow(

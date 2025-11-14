@@ -1,5 +1,5 @@
 // File: lib/features/schedule_screen.dart
-// REFACTORED - MENGGUNAKAN PROVIDER STATE MANAGEMENT
+// VERSI REFACTORED - MENGGUNAKAN PROVIDER STATE MANAGEMENT
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -158,7 +158,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
           ),
 
-          // --- KONTEN LIST ---
+          // --- CONTENT LIST ---
           Expanded(
             child: _buildContent(),
           ),
@@ -167,14 +167,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  // --- Widget Baru: Menampilkan konten (Loading/Error/List) ---
+  /// Widget untuk menampilkan konten (Loading/Error/List)
   Widget _buildContent() {
     return Consumer<ScheduleProvider>(
       builder: (context, scheduleProvider, _) {
         final isLoading = scheduleProvider.isLoading(widget.leagueId);
         final error = scheduleProvider.getError(widget.leagueId);
-        final matches = scheduleProvider.getSchedule(widget.leagueId);
-        final filteredMatches = _filterMatches(matches);
+        final allMatches = scheduleProvider.getSchedule(widget.leagueId);
+        final filteredMatches = _filterMatches(allMatches);
 
         if (isLoading) {
           return const Center(
@@ -186,7 +186,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(error),
+              child: Text('Gagal memuat jadwal: $error'),
             ),
           );
         }

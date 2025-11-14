@@ -1,6 +1,9 @@
 // File: lib/core/models/standings_model.dart
-// VERSI BARU - UNTUK FOOTBALL-DATA.ORG
+// VERSI IMMUTABLE - DENGAN @immutable & const constructor
 
+import 'package:flutter/foundation.dart';
+
+@immutable
 class StandingsModel {
   final String teamName;
   final String teamBadgeUrl; // URL Logo
@@ -11,7 +14,7 @@ class StandingsModel {
   final int losses;
   final int points;
 
-  StandingsModel({
+  const StandingsModel({
     required this.teamName,
     required this.teamBadgeUrl,
     required this.rank,
@@ -24,7 +27,6 @@ class StandingsModel {
 
   // --- FACTORY DITULIS ULANG TOTAL ---
   factory StandingsModel.fromJson(Map<String, dynamic> json) {
-    
     // API baru mengirim data 'tim' di dalam sub-map
     final Map<String, dynamic> team = json['team'] ?? {};
 
@@ -41,6 +43,6 @@ class StandingsModel {
       points: json['points'] ?? 0,
     );
   }
-  
+
   // Kita HAPUS 'copyWith' karena tidak diperlukan lagi.
 }

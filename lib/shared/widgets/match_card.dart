@@ -5,6 +5,9 @@ import 'dart:ui'; // Import untuk ImageFilter
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:suhu_bola/core/models/match_model.dart';
+import 'package:suhu_bola/shared/widgets/match_card/team_badge.dart';
+import 'package:suhu_bola/shared/widgets/match_card/team_logo.dart';
+import 'package:suhu_bola/shared/widgets/match_card/team_name.dart';
 
 class MatchCard extends StatefulWidget {
   final MatchModel match;
@@ -43,99 +46,8 @@ class _MatchCardState extends State<MatchCard> {
       return '$dateStr $timeStr';
     }
   }
-
-  // --- WIDGET: Badge (HOME/AWAY) ---
-  Widget _buildTeamBadge(BuildContext context, {required bool isHome}) {
-    final textTheme = Theme.of(context).textTheme;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final secondaryColor = Theme.of(context).colorScheme.secondary;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isHome
-              ? [primaryColor.withOpacity(0.3), primaryColor.withOpacity(0.15)]
-              : [
-                  secondaryColor.withOpacity(0.3),
-                  secondaryColor.withOpacity(0.15)
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(
-          color: isHome
-              ? primaryColor.withOpacity(0.5)
-              : secondaryColor.withOpacity(0.5),
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        isHome ? 'HOME' : 'AWAY',
-        style: textTheme.labelSmall?.copyWith(
-          fontSize: 9,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
-          color: isHome ? primaryColor : secondaryColor,
-        ),
-      ),
-    );
-  }
-
-  // --- WIDGET UNTUK LOGO SAJA (BESAR, TANPA BORDER) ---
-  Widget _buildTeamLogo(BuildContext context, {required String logoUrl}) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
-    return SizedBox(
-      width: 70,
-      height: 70,
-      child: Center(
-        child: Image.network(
-          logoUrl,
-          fit: BoxFit.contain,
-          width: 70,
-          height: 70,
-          errorBuilder: (context, error, stackTrace) {
-            return Icon(
-              Icons.sports_soccer,
-              color: primaryColor,
-              size: 50,
-            );
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  // --- WIDGET UNTUK NAMA TIM (DIBAWAH LOGO) ---
-  Widget _buildTeamName(BuildContext context, {required String teamName}) {
-    final textTheme = Theme.of(context).textTheme;
-    return Text(
-      teamName,
-      textAlign: TextAlign.center,
-      style: textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
-        letterSpacing: 0.3,
-        color: Colors.white,
-        height: 1.3,
-      ),
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
-
-  // ---------------------------------------------
+  // Sub-widgets (TeamBadge, TeamLogo, TeamName) extracted to
+  // `shared/widgets/match_card/*` for single-responsibility.
 
   @override
   Widget build(BuildContext context) {
@@ -212,25 +124,25 @@ class _MatchCardState extends State<MatchCard> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // --- ROW 1: TEAM BADGES (DI ATAS LOGO) ---
-                  Row(
+                  const Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // Tim Tuan Rumah Badge
                       Expanded(
                         child: Align(
                           alignment: Alignment.topCenter,
-                          child: _buildTeamBadge(context, isHome: true),
+                          child: TeamBadge(isHome: true),
                         ),
                       ),
 
                       // Spacer for center score box
-                      const SizedBox(width: 120),
+                      SizedBox(width: 120),
 
                       // Tim Tamu Badge
                       Expanded(
                         child: Align(
                           alignment: Alignment.topCenter,
-                          child: _buildTeamBadge(context, isHome: false),
+                          child: TeamBadge(isHome: false),
                         ),
                       ),
                     ],
@@ -244,8 +156,7 @@ class _MatchCardState extends State<MatchCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // Logo Tim Tuan Rumah
-                      _buildTeamLogo(
-                        context,
+                      TeamLogo(
                         logoUrl: widget.match.homeTeamLogoUrl,
                       ),
 
@@ -338,8 +249,7 @@ class _MatchCardState extends State<MatchCard> {
                       ),
 
                       // Logo Tim Tamu
-                      _buildTeamLogo(
-                        context,
+                      TeamLogo(
                         logoUrl: widget.match.awayTeamLogoUrl,
                       ),
                     ],
@@ -352,8 +262,7 @@ class _MatchCardState extends State<MatchCard> {
                     children: [
                       Expanded(
                         child: Center(
-                          child: _buildTeamName(context,
-                              teamName: widget.match.homeTeam),
+                          child: TeamName(teamName: widget.match.homeTeam),
                         ),
                       ),
 
@@ -362,8 +271,7 @@ class _MatchCardState extends State<MatchCard> {
 
                       Expanded(
                         child: Center(
-                          child: _buildTeamName(context,
-                              teamName: widget.match.awayTeam),
+                          child: TeamName(teamName: widget.match.awayTeam),
                         ),
                       ),
                     ],

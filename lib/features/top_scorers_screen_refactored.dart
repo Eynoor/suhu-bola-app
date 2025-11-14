@@ -1,23 +1,22 @@
 import 'dart:ui'; // Untuk ImageFilter
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:suhu_bola/core/models/standings_model.dart';
-import 'package:suhu_bola/core/providers/standings_provider.dart';
-import 'package:suhu_bola/shared/widgets/skeleton_loaders.dart';
+import 'package:suhu_bola/core/models/top_scorer_model.dart';
+import 'package:suhu_bola/core/providers/top_scorers_provider.dart';
 
-class StandingsScreen extends StatefulWidget {
+class TopScorersScreen extends StatefulWidget {
   final String leagueId;
 
-  const StandingsScreen({
+  const TopScorersScreen({
     super.key,
     required this.leagueId,
   });
 
   @override
-  State<StandingsScreen> createState() => _StandingsScreenState();
+  State<TopScorersScreen> createState() => _TopScorersScreenState();
 }
 
-class _StandingsScreenState extends State<StandingsScreen> {
+class _TopScorersScreenState extends State<TopScorersScreen> {
   List<String> _availableSeasons = [];
   late String _selectedSeason;
 
@@ -26,9 +25,9 @@ class _StandingsScreenState extends State<StandingsScreen> {
     super.initState();
     _generateSeasonsList();
     _selectedSeason = _availableSeasons.first;
-    // Fetch standings menggunakan Provider
+    // Fetch top scorers menggunakan Provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<StandingsProvider>().fetchStandings(
+      context.read<TopScorersProvider>().fetchTopScorers(
             widget.leagueId,
             _selectedSeason.substring(
                 0, 4), // Mengubah "2023-2024" menjadi "2023"
@@ -51,8 +50,8 @@ class _StandingsScreenState extends State<StandingsScreen> {
     if (newSeason == null || newSeason == _selectedSeason) return;
     setState(() {
       _selectedSeason = newSeason;
-      // Fetch standings dengan musim baru menggunakan Provider
-      context.read<StandingsProvider>().fetchStandings(
+      // Fetch top scorers dengan musim baru menggunakan Provider
+      context.read<TopScorersProvider>().fetchTopScorers(
             widget.leagueId,
             _selectedSeason.substring(
                 0, 4), // Mengubah "2023-2024" menjadi "2023"
@@ -102,7 +101,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
           Expanded(
             flex: 3,
             child: Text(
-              'Tim',
+              'Pemain',
               style: headerStyle,
               textAlign: TextAlign.left,
             ),
@@ -110,7 +109,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
           SizedBox(
             width: 30,
             child: Text(
-              'M',
+              'Gol',
               style: headerStyle,
               textAlign: TextAlign.center,
             ),
@@ -118,23 +117,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
           SizedBox(
             width: 30,
             child: Text(
-              'W',
-              style: headerStyle,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(
-            width: 30,
-            child: Text(
-              'D',
-              style: headerStyle,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(
-            width: 30,
-            child: Text(
-              'L',
+              'Ast',
               style: headerStyle,
               textAlign: TextAlign.center,
             ),
@@ -142,7 +125,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
           SizedBox(
             width: 35,
             child: Text(
-              'Pts',
+              'Pen',
               style: headerStyle?.copyWith(
                 color: primaryColor.withOpacity(0.8),
                 fontWeight: FontWeight.w900,
@@ -155,8 +138,9 @@ class _StandingsScreenState extends State<StandingsScreen> {
     );
   }
 
-  // Widget Baris Tabel (Premium Styling with Hover Effects)
-  Widget _buildTeamRow(BuildContext context, StandingsModel team, int index) {
+  // Widget Baris Tabel (Premium Styling with Glow Effects)
+  Widget _buildScorerRow(
+      BuildContext context, TopScorerModel scorer, int index) {
     final textTheme = Theme.of(context).textTheme;
     final primaryColor = Theme.of(context).colorScheme.primary;
     final secondaryColor = Theme.of(context).colorScheme.secondary;
@@ -165,10 +149,10 @@ class _StandingsScreenState extends State<StandingsScreen> {
     Color rankColor = Colors.grey[400]!;
     Color rankGlowColor = Colors.grey[400]!;
 
-    if (team.rank == 1) {
+    if (index == 0) {
       rankColor = const Color(0xFFfbbf24); // Emas
       rankGlowColor = const Color(0xFFfbbf24);
-    } else if (team.rank <= 4) {
+    } else if (index < 3) {
       rankColor = const Color(0xFF4ade80); // Hijau
       rankGlowColor = const Color(0xFF4ade80);
     }
@@ -207,7 +191,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
               child: Container(
                 alignment: Alignment.center,
                 child: Text(
-                  '${team.rank}',
+                  '${index + 1}',
                   textAlign: TextAlign.center,
                   style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w900,
@@ -219,7 +203,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
                         blurRadius: 12,
                         spreadRadius: 1,
                       ),
-                      if (team.rank <= 4)
+                      if (index < 3)
                         BoxShadow(
                           color: rankGlowColor.withOpacity(0.2),
                           blurRadius: 20,
@@ -230,7 +214,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
                 ),
               ),
             ),
-            // Logo dengan Container Gradient
+            // Logo Tim dengan Container Gradient
             SizedBox(
               width: 42,
               child: Container(
@@ -244,13 +228,13 @@ class _StandingsScreenState extends State<StandingsScreen> {
                       secondaryColor.withOpacity(0.05),
                     ],
                   ),
-                  // border removed so team badge appears without stroke
+                  // border intentionally removed to show clean badge/logo
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(7),
-                  child: team.teamBadgeUrl.isNotEmpty
+                  child: scorer.teamBadgeUrl.isNotEmpty
                       ? Image.network(
-                          team.teamBadgeUrl,
+                          scorer.teamBadgeUrl,
                           width: 24,
                           height: 24,
                           fit: BoxFit.contain,
@@ -268,67 +252,58 @@ class _StandingsScreenState extends State<StandingsScreen> {
                 ),
               ),
             ),
-            // Nama Tim
+            // Nama Pemain dan Tim
             Expanded(
               flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    scorer.playerName,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    scorer.teamName,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[500],
+                      fontSize: 11,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            // Gol - Highlight dengan warna
+            SizedBox(
+              width: 30,
               child: Text(
-                team.teamName,
-                style: textTheme.bodyMedium?.copyWith(
+                '${scorer.goals}',
+                style: textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            // Statistik (M, W, D, L) - Lebih highlight
-            SizedBox(
-              width: 30,
-              child: Text(
-                '${team.played}',
-                style: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(
-              width: 30,
-              child: Text(
-                '${team.wins}',
-                style: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
                   fontSize: 11,
                   color: const Color(0xFF4ade80),
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
+            // Assist - Highlight dengan warna
             SizedBox(
               width: 30,
               child: Text(
-                '${team.draws}',
+                '${scorer.assists}',
                 style: textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 11,
-                  color: Colors.grey[400],
+                  color: primaryColor,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(
-              width: 30,
-              child: Text(
-                '${team.losses}',
-                style: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
-                  color: const Color(0xFFef4444),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            // Lencana Poin (Premium Style dengan Glow)
+            // Penalti Badge (Premium Style dengan Glow)
             SizedBox(
               width: 35,
               child: Container(
@@ -354,7 +329,7 @@ class _StandingsScreenState extends State<StandingsScreen> {
                   ],
                 ),
                 child: Text(
-                  '${team.points}',
+                  '${scorer.penalties}',
                   textAlign: TextAlign.center,
                   style: textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w900,
@@ -445,22 +420,20 @@ class _StandingsScreenState extends State<StandingsScreen> {
                       border: Border.all(
                           color: Colors.white.withOpacity(0.1), width: 1.5),
                     ),
-                    child: Consumer<StandingsProvider>(
-                      builder: (context, standingsProvider, _) {
+                    child: Consumer<TopScorersProvider>(
+                      builder: (context, topScorersProvider, _) {
                         final cacheKey =
                             '${widget.leagueId}-${_selectedSeason.substring(0, 4)}';
-                        final isLoading = standingsProvider.isLoading(cacheKey);
-                        final error = standingsProvider.getError(cacheKey);
-                        final standings =
-                            standingsProvider.getStandings(cacheKey);
+                        final isLoading =
+                            topScorersProvider.isLoading(cacheKey);
+                        final error = topScorersProvider.getError(cacheKey);
+                        final topScorers =
+                            topScorersProvider.getTopScorers(widget.leagueId);
 
-                        if (isLoading && standings.isEmpty) {
-                          return SkeletonLoader(
-                            itemCount: 10,
-                            itemHeight: 60,
-                          );
+                        if (isLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
-
                         if (error != null) {
                           return Center(
                               child: Padding(
@@ -468,24 +441,23 @@ class _StandingsScreenState extends State<StandingsScreen> {
                             child: Text('Error: $error'),
                           ));
                         }
-
-                        if (standings.isEmpty) {
+                        if (topScorers.isEmpty) {
                           return const Center(
-                              child: Text('Tidak ada data klasemen.'));
+                              child: Text('Tidak ada data top scorer.'));
                         }
 
                         return Column(
                           children: [
-                            // Header Tabel
+                            // Header Tabel (di dalam container kaca)
                             _buildHeaderRow(context),
-                            // List Data (Semua dalam 1 halaman)
+                            // List Data
                             Expanded(
                               child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: standings.length,
+                                padding: EdgeInsets.zero, // Hapus padding
+                                itemCount: topScorers.length,
                                 itemBuilder: (context, index) {
-                                  return _buildTeamRow(
-                                      context, standings[index], index);
+                                  return _buildScorerRow(
+                                      context, topScorers[index], index);
                                 },
                               ),
                             ),

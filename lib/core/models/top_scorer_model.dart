@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+
+@immutable
 class TopScorerModel {
   final String playerName;
   final String teamName;
@@ -6,7 +9,7 @@ class TopScorerModel {
   final int assists;
   final int penalties;
 
-  TopScorerModel({
+  const TopScorerModel({
     required this.playerName,
     required this.teamName,
     required this.teamBadgeUrl,

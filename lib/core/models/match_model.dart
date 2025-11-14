@@ -1,9 +1,10 @@
 // File: lib/core/models/match_model.dart
-// VERSI BARU - DENGAN 'unused_import' DIHAPUS
+// VERSI IMMUTABLE - DENGAN @immutable & const constructor
 
-// import 'package:flutter/foundation.dart'; // <-- DIHAPUS
-import 'package:intl/intl.dart'; 
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
+@immutable
 class MatchModel {
   final String eventName;
   final String homeTeam;
@@ -13,11 +14,11 @@ class MatchModel {
   final String date;
   final String time;
   final String status;
-  
+
   final String homeTeamLogoUrl;
   final String awayTeamLogoUrl;
 
-  MatchModel({
+  const MatchModel({
     required this.eventName,
     required this.homeTeam,
     required this.awayTeam,
@@ -77,7 +78,7 @@ class MatchModel {
       awayTeam: awayName,
       homeScore: homeScore,
       awayScore: awayScore,
-      date: _formatDate(utcDate), 
+      date: _formatDate(utcDate),
       time: _formatTime(utcDate),
       status: json['status'] ?? 'SCHEDULED',
       homeTeamLogoUrl: homeLogo,
